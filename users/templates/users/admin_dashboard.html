@@ -1,0 +1,32 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="{% static 'users/css/style.css' %}" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Welcome, {{ user.full_name }} ({{ user.role }})</h1>
+      <form method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit">Logout</button>
+      </form>
+
+      <div class="dashboard-grid">
+        <div class="card">
+          <h3>Courses</h3>
+          <p>Manage courses and assignments</p>
+        </div>
+        <div class="card">
+          <h3>Students</h3>
+          <p>View and manage student users</p>
+        </div>
+        <div class="card">
+          <h3>Reports</h3>
+          <p>View submission statistics</p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

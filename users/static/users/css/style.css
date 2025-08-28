@@ -1,0 +1,155 @@
+---------------------------------*/ * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(120deg, #f6f9fc, #e9eff5);
+  color: #333;
+  min-height: 100vh;
+}
+
+/* ------------------------------
+   Container for all pages
+---------------------------------*/
+.container {
+  max-width: 500px;
+  margin: 60px auto;
+  padding: 30px 25px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+/* ------------------------------
+   Headings
+---------------------------------*/
+h1 {
+  margin-bottom: 20px;
+  color: #007bff;
+  font-size: 2rem;
+}
+
+/* ------------------------------
+   Links
+---------------------------------*/
+a {
+  color: #007bff;
+  text-decoration: none;
+  margin: 0 10px;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* ------------------------------
+   Forms
+---------------------------------*/
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+form input,
+form select,
+form textarea {
+  padding: 12px 15px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  width: 100%;
+  transition: all 0.2s ease;
+}
+
+form input:focus,
+form select:focus,
+form textarea:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+/* ------------------------------
+   Container for Login/Signup
+---------------------------------*/
+.auth-container {
+  max-width: 400px; /* Smaller width */
+  margin: 80px auto; /* Centered vertically with some top margin */
+  padding: 30px 25px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+/* Optional: add slight padding around inputs */
+.auth-container form input,
+.auth-container form button {
+  width: 90%; /* Keep inputs full width inside container */
+  margin-bottom: 15px;
+}
+
+/* ------------------------------
+   Buttons
+---------------------------------*/
+form button {
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+form button:hover {
+  background-color: #0056b3;
+}
+
+/* ------------------------------
+   Dashboard Cards
+---------------------------------*/
+.card {
+  background: #fff;
+  padding: 20px;
+  margin: 15px 0;
+  border-radius: 10px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  text-align: left;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* ------------------------------
+   Dashboard Grid
+---------------------------------*/
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-top: 30px;
+}
+
+/* ------------------------------
+   Responsive Text & Buttons
+---------------------------------*/
+@media (max-width: 500px) {
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  form input,
+  form button {
+    font-size: 0.95rem;
+    padding: 10px;
+  }
+}

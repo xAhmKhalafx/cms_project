@@ -1,0 +1,68 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Student Dashboard</title>
+    <link rel="stylesheet" href="{% static 'users/css/style.css' %}" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Welcome, {{ user.full_name }} (Student)</h1>
+
+      <!-- Logout form -->
+      <form method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit">Logout</button>
+      </form>
+
+      <!-- Dashboard Grid -->
+      <div class="dashboard-grid">
+        <!-- Courses Card -->
+        <div class="card">
+          <h3>My Courses</h3>
+          <p>View your enrolled courses</p>
+          <ul>
+            <!-- Example dynamic data -->
+            {% for course in courses %}
+            <li>{{ course.title }}</li>
+            {% empty %}
+            <li>No courses enrolled yet</li>
+            {% endfor %}
+          </ul>
+        </div>
+
+        <!-- Assignments Card -->
+        <div class="card">
+          <h3>Assignments</h3>
+          <p>Check pending and submitted assignments</p>
+          <ul>
+            {% if assignments %} {% for assignment in assignments %}
+            <li>
+              {{ assignment.title }} - {% if assignment.is_submitted %}
+              Submitted {% else %} Pending {% endif %}
+            </li>
+            {% endfor %} {% else %}
+            <li>No assignments assigned yet</li>
+            {% endif %}
+          </ul>
+        </div>
+
+        <!-- Submissions Card -->
+        <div class="card">
+          <h3>My Submissions</h3>
+          <p>Track all submitted assignments</p>
+          <ul>
+            {% for submission in submissions %}
+            <li>{{ submission.assignment.title }} - {{ submission.status }}</li>
+            {% empty %}
+            <li>No submissions yet</li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+      <!-- dashboard-grid -->
+    </div>
+    <!-- container -->
+  </body>
+</html>
