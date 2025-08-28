@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Course
+<<<<<<< HEAD
 from users.serializers import UserSerializer
 
 class CourseSerializer(serializers.ModelSerializer):
@@ -25,3 +26,10 @@ class CourseWriteSerializer(serializers.ModelSerializer):
         course.instructors.set(instructors)
         course.students.set(students)
         return course
+=======
+
+class CourseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Course
+        fields = '__all__'
+>>>>>>> origin/main
