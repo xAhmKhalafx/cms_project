@@ -1,61 +1,38 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth import login, authenticate
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.decorators import login_required
-
-from rest_framework.views import APIView
+# users/views.py
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework import status, permissions
-from .models import User
-from .serializers import UserSerializer, UserCreateSerializer
+from django.contrib.auth.models import User
+from .serializers import UserSerializer, UserCreateSerializer, StudentSerializer, LecturerSerializer
+from .models import Student, Lecturer
+from django.http import HttpResponse  # add this import if not present
 
-class UserListCreateAPIView(APIView):
-    permission_classes = [permissions.IsAdminUser]
-
-    def get(self, request):
-        users = User.objects.filter(is_deleted=False)
-        serializer = UserSerializer(users, many=True)
-        return Response(serializer.data)
-
-    def post(self, request):
-        serializer = UserCreateSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-# -------------------------------
-# Landing Page
-# -------------------------------
 def landing_page(request):
-    return render(request, 'users/landing.html')
+    return HttpResponse("University CMS is running ✅")
 
-# -------------------------------
-# Signup Page
-# -------------------------------
-def signup_page(request):
-    if request.method == 'POST':
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            login(request, user)
-            return redirect('dashboard')
-    else:
-        form = UserCreationForm()
-    return render(request, 'users/signup.html', {'form': form})
+@api_view(["GET"])
+def me(request):
+    """Return basic info about the current user (if logged in)."""
+    if request.user.is_authenticated:
+        return Response(UserSerializer(request.user).data)
+    return Response({"detail": "Not authenticated"}, status=401)
 
-# -------------------------------
-# Dashboard Page
-# -------------------------------
-@login_required
-def dashboard_page(request):
-    user = request.user
-    # Role-based dashboard logic
-    if user.role == 'ADMIN':
-        template = 'users/admin_dashboard.html'
-    elif user.role in ['EDITOR', 'AUTHOR']:
-        template = 'users/instructor_dashboard.html'
-    else:
-        template = 'users/student_dashboard.html'
-    
-    context = {'user': user}
-    return render(request, template, context)
+@api_view(["GET"])
+def list_students(request):
+    qs = Student.objects.select_related("user").all()
+    data = StudentSerializer(qs, many=True).data
+    return Response(data)
+
+@api_view(["GET"])
+def list_lecturers(request):
+    qs = Lecturer.objects.select_related("user").all()
+    data = LecturerSerializer(qs, many=True).data
+    return Response(data)
+
+@api_view(["POST"])
+def create_user(request):
+    """Optional helper for testing; remove if you don't need it."""
+    ser = UserCreateSerializer(data=request.data)
+    if ser.is_valid():
+        user = ser.save()
+        return Response(UserSerializer(user).data, status=201)
+    return Response(ser.errors, status=400)

@@ -1,74 +1,38 @@
+# users/serializers.py
 from rest_framework import serializers
-from .models import User, Profile
+from django.contrib.auth.models import User
+from .models import Student, Lecturer
 
-# -------------------------------
-# Profile Serializer
-# -------------------------------
-class ProfileSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Profile
-        fields = ['bio', 'avatar', 'website', 'social_links']
-
-# -------------------------------
-# User Serializer (read)
-# -------------------------------
 class UserSerializer(serializers.ModelSerializer):
-    profile = ProfileSerializer(read_only=True)
-    full_name = serializers.ReadOnlyField()  # property from model
-
     class Meta:
         model = User
-        fields = [
-            'id', 'email', 'first_name', 'last_name',
-            'full_name', 'role', 'is_active', 'is_staff',
-            'date_joined', 'updated_at', 'profile'
-        ]
-        read_only_fields = ['id', 'is_staff', 'date_joined', 'updated_at']
+        fields = ["id", "username", "first_name", "last_name", "email", "is_staff", "is_active"]
 
-# -------------------------------
-# User Serializer (create/update)
-# -------------------------------
+class StudentSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+
+    class Meta:
+        model = Student
+        fields = ["student_id", "student_number", "program", "user"]
+
+class LecturerSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+
+    class Meta:
+        model = Lecturer
+        fields = ["lecturer_id", "employee_number", "department", "user"]
+
+# Optional: if you need a simple user-creation serializer for testing
 class UserCreateSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True)
-    profile = ProfileSerializer(required=False)  # optional nested profile
+    password = serializers.CharField(write_only=True, min_length=6)
 
     class Meta:
         model = User
-        fields = [
-            'id', 'email', 'password', 'first_name', 'last_name',
-            'role', 'profile'
-        ]
+        fields = ["username", "email", "password", "first_name", "last_name"]
 
     def create(self, validated_data):
-        profile_data = validated_data.pop('profile', None)
-        password = validated_data.pop('password')
-        user = User.objects.create(**validated_data)
+        password = validated_data.pop("password")
+        user = User(**validated_data)
         user.set_password(password)
         user.save()
-
-        if profile_data:
-            Profile.objects.create(user=user, **profile_data)
-
         return user
-
-    def update(self, instance, validated_data):
-        profile_data = validated_data.pop('profile', None)
-        password = validated_data.pop('password', None)
-
-        for attr, value in validated_data.items():
-            setattr(instance, attr, value)
-
-        if password:
-            instance.set_password(password)
-        instance.save()
-
-        if profile_data:
-            profile = getattr(instance, 'profile', None)
-            if profile:
-                for attr, value in profile_data.items():
-                    setattr(profile, attr, value)
-                profile.save()
-            else:
-                Profile.objects.create(user=instance, **profile_data)
-
-        return instance

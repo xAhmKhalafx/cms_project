@@ -11,17 +11,20 @@ DEBUG = os.getenv("DEBUG", "1") == "1"
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 
 INSTALLED_APPS = [
-    "django.contrib.admin",
-    "django.contrib.auth",
-    "django.contrib.contenttypes",
-    "django.contrib.sessions",
-    "django.contrib.messages",
-    "django.contrib.staticfiles",
-    "rest_framework",
-    "users",
-    "courses",
-    "assignments",
-    "submissions",
+    # Django defaults...
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+
+    'rest_framework',
+
+    'users',
+    'courses',
+    'assignments',
+    'submissions',
 ]
 
 MIDDLEWARE = [
@@ -70,5 +73,4 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-AUTH_USER_MODEL = "users.User"
 LOGIN_REDIRECT_URL = "/dashboard/"
