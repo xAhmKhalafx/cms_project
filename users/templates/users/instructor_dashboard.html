@@ -1,0 +1,67 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Instructor Dashboard</title>
+    <link rel="stylesheet" href="{% static 'users/css/style.css' %}" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Welcome, {{ user.full_name }} (Instructor)</h1>
+
+      <!-- Logout form -->
+      <form method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit">Logout</button>
+      </form>
+
+      <!-- Dashboard Grid -->
+      <div class="dashboard-grid">
+        <!-- Courses Card -->
+        <div class="card">
+          <h3>My Courses</h3>
+          <p>Manage and view your courses</p>
+          <ul>
+            {% if courses %} {% for course in courses %}
+            <li>{{ course.title }}</li>
+            {% endfor %} {% else %}
+            <li>No courses assigned yet</li>
+            {% endif %}
+          </ul>
+        </div>
+
+        <!-- Assignments Card -->
+        <div class="card">
+          <h3>Assignments</h3>
+          <p>Create and track assignments</p>
+          <ul>
+            {% if assignments %} {% for assignment in assignments %}
+            <li>{{ assignment.title }} - Due: {{ assignment.due_date }}</li>
+            {% endfor %} {% else %}
+            <li>No assignments created yet</li>
+            {% endif %}
+          </ul>
+        </div>
+
+        <!-- Submissions Card -->
+        <div class="card">
+          <h3>Student Submissions</h3>
+          <p>View all student submissions</p>
+          <ul>
+            {% if submissions %} {% for submission in submissions %}
+            <li>
+              {{ submission.student.full_name }} - {{
+              submission.assignment.title }} : {{ submission.status }}
+            </li>
+            {% endfor %} {% else %}
+            <li>No submissions yet</li>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+      <!-- dashboard-grid -->
+    </div>
+    <!-- container -->
+  </body>
+</html>
