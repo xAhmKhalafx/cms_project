@@ -1,0 +1,8 @@
+[
+  {"model": "courses.assignment", "pk": 1,
+   "fields": {"course": 1, "title": "A1: Wireframes", "description": "UI mockups", "due_date": "2025-10-15"}},
+  {"model": "courses.assignment", "pk": 2,
+   "fields": {"course": 1, "title": "A2: API Spec", "description": "Define endpoints", "due_date": "2025-10-25"}},
+  {"model": "courses.assignment", "pk": 3,
+   "fields": {"course": 2, "title": "A1: ERD", "description": "DB modeling", "due_date": "2025-10-18"}}
+]

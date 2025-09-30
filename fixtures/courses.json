@@ -1,0 +1,6 @@
+[
+  {"model": "courses.course", "pk": 1,
+   "fields": {"title": "Intro to Web Systems", "description": "Core concepts", "lecturer": "Dr Smith"}},
+  {"model": "courses.course", "pk": 2,
+   "fields": {"title": "Enterprise Patterns", "description": "Design & architecture", "lecturer": "Dr Lee"}}
+]
