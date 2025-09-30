@@ -1,53 +1,20 @@
-# users/models.py
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
-from django.utils import timezone
-import uuid
+from django.contrib.auth.models import User  # using built-in auth user
 
-class UserManager(BaseUserManager):
-    def create_user(self, email, password=None, **extra_fields):
-        if not email:
-            raise ValueError("Email required")
-        email = self.normalize_email(email)
-        user = self.model(email=email, **extra_fields)
-        if password:
-            user.set_password(password)
-        user.save(using=self._db)
-        return user
-    def create_superuser(self, email, password=None, **extra_fields):
-        extra_fields.setdefault("is_staff", True)
-        extra_fields.setdefault("is_superuser", True)
-        extra_fields.setdefault("role", User.Role.ADMIN)
-        return self.create_user(email, password, **extra_fields)
-
-class User(AbstractBaseUser, PermissionsMixin):
-    class Role(models.TextChoices):
-        ADMIN = "ADMIN", "Admin"
-        INSTRUCTOR = "INSTRUCTOR", "Instructor"
-        STUDENT = "STUDENT", "Student"
-
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    email = models.EmailField(unique=True, max_length=255)
-    first_name = models.CharField(max_length=100, blank=True)
-    last_name = models.CharField(max_length=100, blank=True)
-    role = models.CharField(max_length=20, choices=Role.choices, default=Role.STUDENT)
-
-    is_active = models.BooleanField(default=True)
-    is_staff = models.BooleanField(default=False)
-
-    date_joined = models.DateTimeField(default=timezone.now)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    objects = UserManager()
-    USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = []
+class Student(models.Model):
+    student_id = models.AutoField(primary_key=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="student_profile")
+    student_number = models.CharField(max_length=20, unique=True, db_index=True)
+    program = models.CharField(max_length=100, blank=True)
 
     def __str__(self):
-        return f"{self.email} ({self.role})"
+        return f"{self.user.get_full_name() or self.user.username} ({self.student_number})"
 
-class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
-    bio = models.TextField(blank=True)
-    avatar = models.ImageField(upload_to="avatars/", blank=True, null=True)
+class Lecturer(models.Model):
+    lecturer_id = models.AutoField(primary_key=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="lecturer_profile")
+    employee_number = models.CharField(max_length=20, unique=True, db_index=True)
+    department = models.CharField(max_length=100, blank=True)
+
     def __str__(self):
-        return f"Profile for {self.user.email}"
+        return f"{self.user.get_full_name() or self.user.username} ({self.employee_number})"

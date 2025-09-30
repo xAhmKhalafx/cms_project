@@ -20,6 +20,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "users",
     "courses",
+    "assignments",
     "submissions",
 ]
 
@@ -54,6 +55,7 @@ DATABASES = {
         "NAME": BASE_DIR / "db.sqlite3",
     }
 }
+
 
 AUTH_PASSWORD_VALIDATORS = []
 LANGUAGE_CODE = "en-au"

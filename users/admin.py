@@ -1,11 +1,12 @@
-# users/admin.py
 from django.contrib import admin
-from .models import User, Profile
-@admin.register(User)
-class UserAdmin(admin.ModelAdmin):
-    list_display = ("email", "role", "is_staff", "is_active", "date_joined")
-    list_filter  = ("role", "is_staff", "is_active")
-    search_fields = ("email", "first_name", "last_name")
-@admin.register(Profile)
-class ProfileAdmin(admin.ModelAdmin):
-    list_display = ("user", "bio")
+from .models import Student, Lecturer
+
+@admin.register(Student)
+class StudentAdmin(admin.ModelAdmin):
+    list_display = ("student_id", "user", "student_number", "program")
+    search_fields = ("user__username", "student_number")
+
+@admin.register(Lecturer)
+class LecturerAdmin(admin.ModelAdmin):
+    list_display = ("lecturer_id", "user", "employee_number", "department")
+    search_fields = ("user__username", "employee_number")
