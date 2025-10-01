@@ -1,0 +1,4 @@
+[
+  { "model": "courses.course", "pk": 1, "fields": { "title": "Enterprise Web Systems", "description": "BN332 core", "semester": "T2-2025", "lecturer": 1 } },
+  { "model": "courses.course", "pk": 2, "fields": { "title": "Software Engineering", "description": "BN209", "semester": "T2-2025", "lecturer": 1 } }
+]

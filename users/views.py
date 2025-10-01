@@ -5,6 +5,31 @@ from django.contrib.auth.models import User
 from .serializers import UserSerializer, UserCreateSerializer, StudentSerializer, LecturerSerializer
 from .models import Student, Lecturer
 from django.http import HttpResponse  # add this import if not present
+from django.shortcuts import render, redirect
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib import messages
+# users/views.py
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def dashboard_page(request):
+    # You can pass real data later; this is a working stub.
+    return render(request, "users/dashboard.html", {"username": request.user.username})
+
+def signup_page(request):
+    """
+    Display a signup form and create a new Django auth user.
+    """
+    if request.method == "POST":
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()  # creates new auth.User
+            messages.success(request, "Account created! You can log in now.")
+            return redirect("login")  # or redirect("landing") if you prefer
+    else:
+        form = UserCreationForm()
+    return render(request, "users/signup.html", {"form": form})
+
 
 def landing_page(request):
     return HttpResponse("University CMS is running ✅")

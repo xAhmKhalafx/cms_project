@@ -1,0 +1,4 @@
+[
+  { "model": "users.lecturer", "pk": 1, "fields": { "user": 1, "employee_number": "LEC1001", "department": "IT" } },
+  { "model": "users.student",  "pk": 1, "fields": { "user": 2, "student_number": "STU2001", "program": "SE" } }
+]

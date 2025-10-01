@@ -1,18 +1,26 @@
-{% load static %}
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="ENG">
   <head>
-    <title>Sign Up</title>
-    <link rel="stylesheet" href="{% static 'users/css/style.css' %}" />
+    <meta charset="utf-8" />
+    <title>Sign up</title>
   </head>
   <body>
-    <div class="auth-container">
-      <h1>Sign Up</h1>
-      <form method="post">
-        {% csrf_token %} {{ form.as_p }}
-        <button type="submit">Sign Up</button>
-      </form>
-      <a href="{% url 'login' %}">Login</a>
-    </div>
+    <h1>Create an account</h1>
+
+    {% if messages %}
+      <ul>
+        {% for m in messages %}
+          <li>{{ m }}</li>
+        {% end for %}
+      </ul>
+    {% endif %}
+
+    <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit">Sign up</button>
+    </form>
+
+    <p><a href="{% url 'login' %}">Already have an account? Log in</a></p>
   </body>
 </html>

@@ -1,18 +1,12 @@
-{% load static %}
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Login</title>
-    <link rel="stylesheet" href="{% static 'users/css/style.css' %}" />
-  </head>
+<!doctype html>
+<html lang="">
+  <head><meta charset="utf-8"><title>Login</title></head>
   <body>
-    <div class="auth-container">
-      <h1>Login</h1>
-      <form method="post">
-        {% csrf_token %} {{ form.as_p }}
-        <button type="submit">Login</button>
-      </form>
-      <a href="{% url 'signup' %}">Sign Up</a>
-    </div>
+    <h1>Login</h1>
+    <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit">Log in</button>
+    </form>
   </body>
 </html>

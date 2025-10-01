@@ -10,6 +10,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("api/", include("courses.urls")),
+    path("login/", auth_views.LoginView.as_view(template_name="users/login.html"), name="login"),
 
     # User management API (optional if using DRF)
     path('api/users/', include('users.urls')),
