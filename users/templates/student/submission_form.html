@@ -1,0 +1,96 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ page_title }}</title>
+    <link rel="stylesheet" href="{% static 'users/css/style.css' %}" />
+    <style>
+      .assignment-details {
+        padding: 15px 20px;
+        background-color: var(--color-background-light);
+        border-radius: var(--border-radius);
+        margin-bottom: 20px;
+      }
+      .assignment-details p {
+        margin-bottom: 5px;
+      }
+      .form-card textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid var(--color-border);
+        border-radius: 4px;
+        resize: vertical;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="main-wrapper">
+      <header class="page-header">
+        <a href="{% url 'student_assignment_list' %}" class="back-link"
+          >← Back to Assignments</a
+        >
+        <h1>{{ page_title }}</h1>
+      </header>
+
+      {% if messages %}
+      <div class="messages-container">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <div class="form-card">
+        <div class="assignment-details">
+          <p><strong>Course:</strong> {{ assignment.course.title }}</p>
+          <p>
+            <strong>Due Date:</strong> {{ assignment.due_date|date:"M j, Y H:i"
+            }}
+          </p>
+          <p><strong>Description:</strong></p>
+          <div class="content-box">
+            {{ assignment.description|linebreaksbr }}
+          </div>
+          {% if is_late %}
+          <p
+            style="
+              color: var(--color-danger);
+              font-weight: bold;
+              margin-top: 10px;
+            "
+          >
+            Warning: This assignment is past the due date.
+          </p>
+          {% endif %}
+        </div>
+
+        <form method="post">
+          {% csrf_token %}
+
+          <div class="form-group">
+            <label for="{{ form.submission_content.id_for_label }}"
+              >Your Submission Content:</label
+            >
+            {{ form.submission_content }} {% for error in
+            form.submission_content.errors %}
+            <p class="error-message">{{ error }}</p>
+            {% endfor %}
+            <small class="text-gray-500"
+              >Paste your essay, code, or links here. You can edit this
+              submission until it is graded (or until the due date, if
+              applicable).</small
+            >
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn-primary">
+              {{ "Update Submission" if is_edit else "Submit Assignment" }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

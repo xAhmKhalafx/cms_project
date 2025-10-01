@@ -1,0 +1,83 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin - Course List</title>
+    <link rel="stylesheet" href="{% static 'users/css/style.css' %}" />
+  </head>
+  <body>
+    <div class="main-wrapper">
+      <header class="page-header">
+        <a href="{% url 'dashboard' %}" class="back-link"
+          >← Back to Dashboard</a
+        >
+        <h1>Course/Unit Management ({{ courses|length }} Courses)</h1>
+        <a
+          href="{% url 'admin_course_create' %}"
+          class="btn-primary action-link"
+        >
+          + Add New Course
+        </a>
+      </header>
+
+      {% if messages %}
+      <div class="messages-container">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <div class="list-container">
+        <div class="list-header course-header">
+          <span>Course Title</span>
+          <span>Lecturer</span>
+          <span>Students Enrolled</span>
+          <span>Actions</span>
+        </div>
+
+        {% for course in courses %}
+        <div class="list-item course-item">
+          <span class="course-title">{{ course.title }}</span>
+          <span class="course-lecturer">
+            {% if course.lecturer %} {{ course.lecturer.get_full_name }} {% else
+            %}
+            <span class="status-inactive">Unassigned</span>
+            {% endif %}
+          </span>
+          <span class="course-students">{{ course.students.count }}</span>
+          <span class="course-actions">
+            <a
+              href="{% url 'admin_course_edit' course.id %}"
+              class="btn-secondary btn-small"
+              >Edit</a
+            >
+
+            <!-- Delete Form -->
+            <form
+              method="post"
+              action="{% url 'admin_course_list' %}"
+              style="display: inline"
+            >
+              {% csrf_token %}
+              <input type="hidden" name="course_id" value="{{ course.id }}" />
+              <button
+                type="submit"
+                name="delete_course"
+                class="btn-danger btn-small"
+                onclick="return confirm('WARNING: Are you sure you want to PERMANENTLY DELETE the course: {{ course.title }}? This will delete all assignments and submissions.')"
+              >
+                Delete
+              </button>
+            </form>
+          </span>
+        </div>
+        {% empty %}
+        <p class="empty-state">No courses have been created yet.</p>
+        {% endfor %}
+      </div>
+    </div>
+  </body>
+</html>

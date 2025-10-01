@@ -1,3 +1,5 @@
+# users/management/commands/seed_users.py (Updated Version)
+
 from django.core.management.base import BaseCommand
 from users.models import User, Profile
 
@@ -14,7 +16,8 @@ class Command(BaseCommand):
             email='admin@university.com',
             password='Admin123!',
             first_name='Alice',
-            last_name='Admin'
+            last_name='Admin',
+            role='ADMIN' # 🟢 FIXED: Set the role explicitly
         )
         Profile.objects.create(user=admin_user, bio='Administrator of the CMS')
 
@@ -24,7 +27,7 @@ class Command(BaseCommand):
             password='Professor123!',
             first_name='Bob',
             last_name='Professor',
-            role=User.Role.EDITOR  # or AUTHOR depending on your CMS logic
+            role='INSTRUCTOR' # 🟢 FIXED: Using the correct value
         )
         Profile.objects.create(user=professor_user, bio='Computer Science Professor')
 
@@ -34,9 +37,8 @@ class Command(BaseCommand):
             password='Student123!',
             first_name='Charlie',
             last_name='Student',
-            role=User.Role.VIEWER
+            role='STUDENT' # 🟢 FIXED: Using the correct value
         )
         Profile.objects.create(user=student_user, bio='Enrolled Computer Science Student')
 
         self.stdout.write(self.style.SUCCESS('Successfully seeded users!'))
-

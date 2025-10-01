@@ -1,0 +1,129 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ page_title }}</title>
+    <link rel="stylesheet" href="{% static 'users/css/style.css' %}" />
+    <style>
+        .course-card {
+            background-color: white;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-medium);
+            margin-bottom: 30px;
+            border-left: 5px solid var(--color-primary);
+        }
+        .course-card h2 {
+            margin-top: 0;
+            color: var(--color-primary);
+            border-bottom: 2px dashed var(--color-border);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        .performance-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .stat-mini {
+            background-color: var(--color-background-light);
+            padding: 10px;
+            border-radius: 4px;
+            text-align: center;
+        }
+        .stat-mini strong {
+            display: block;
+            font-size: 1.5rem;
+            color: var(--color-secondary);
+        }
+        .performance-submissions .list-item {
+            grid-template-columns: 3fr 1fr 1fr;
+        }
+        .performance-submissions .list-header {
+            grid-template-columns: 3fr 1fr 1fr;
+        }
+        .status-absent { background-color: #f8d7da; color: #721c24; padding: 3px 8px; border-radius: 4px; display: inline-block;}
+        .status-present { background-color: #d4edda; color: #155724; padding: 3px 8px; border-radius: 4px; display: inline-block;}
+        .grade-good { color: var(--color-success); font-weight: bold; }
+        .grade-avg { color: var(--color-warning); font-weight: bold; }
+        .grade-na { color: var(--color-info); }
+
+        @media (max-width: 600px) {
+            .performance-stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-wrapper">
+        <header class="page-header">
+            <a href="{% url 'dashboard' %}" class="back-link">← Back to Dashboard</a>
+            <h1>{{ page_title }}</h1>
+        </header>
+
+        {% if not performance_data %}
+            <p class="empty-state">You are not currently enrolled in any courses.</p>
+        {% endif %}
+
+        {% for course_data in performance_data %}
+            <div class="course-card">
+                <h2>{{ course_data.course.title }}</h2>
+
+                <!-- Performance Stats -->
+                <div class="performance-stats-grid">
+                    <div class="stat-mini">
+                        <small>Avg. Assignment Grade</small>
+                        <strong class="{% if course_data.avg_grade != 'N/A' and course_data.avg_grade|floatformat:0 >= 70 %}grade-good{% elif course_data.avg_grade != 'N/A' %}grade-avg{% else %}grade-na{% endif %}">
+                            {{ course_data.avg_grade }}
+                        </strong>
+                        <small>({{ course_data.graded_count }}/{{ course_data.total_assignments }} graded)</small>
+                    </div>
+                    <div class="stat-mini">
+                        <small>Attendance Rate</small>
+                        <strong class="{% if course_data.attendance_rate|slice:":-1"|to_int >= 80 %}grade-good{% else %}grade-avg{% endif %}">
+                            {{ course_data.attendance_rate }}
+                        </strong>
+                        <small>({{ course_data.present_count }}/{{ course_data.total_sessions }} sessions)</small>
+                    </div>
+                    <div class="stat-mini">
+                        <small>Total Absences</small>
+                        <strong style="color: var(--color-danger);">{{ course_data.absent_count }}</strong>
+                        <small>sessions marked absent</small>
+                    </div>
+                </div>
+
+                <!-- Submission History -->
+                <h3 class="section-title" style="font-size: 1.2rem; margin-top: 20px;">Submission History</h3>
+                <div class="list-container performance-submissions">
+                    <div class="list-header">
+                        <span>Assignment</span>
+                        <span>Submission Date</span>
+                        <span>Grade/Status</span>
+                    </div>
+
+                    {% for sub in course_data.submissions %}
+                        <div class="list-item">
+                            <span>{{ sub.assignment.title }}</span>
+                            <span>{{ sub.submitted_at|date:"M j, Y" }}</span>
+                            <span class="sub-actions">
+                                {% if sub.grade %}
+                                    <span class="grade-good">{{ sub.grade }}</span>
+                                {% else %}
+                                    <span class="status-pending">{{ sub.get_status_display }}</span>
+                                {% endif %}
+                                <a href="{% url 'student_view_submission' sub.id %}" class="btn-secondary btn-small">View</a>
+                            </span>
+                        </div>
+                    {% empty %}
+                        <p class="empty-state" style="padding: 10px 0;">No submissions yet for this course.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

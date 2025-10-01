@@ -1,0 +1,125 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ page_title }}</title>
+    <link rel="stylesheet" href="{% static 'users/css/style.css' %}" />
+    <style>
+      .submission-content-box {
+        background-color: #f7f9fc;
+        border: 1px solid #e0e6ed;
+        padding: 15px;
+        border-radius: 6px;
+        margin-top: 10px;
+        font-size: 0.95rem;
+        line-height: 1.5;
+        min-height: 100px;
+      }
+      .grading-result {
+        margin-top: 20px;
+        padding: 20px;
+        border-radius: 8px;
+        background-color: #e6ffed;
+        border: 1px solid #c8f0d8;
+      }
+      .grading-result.pending {
+        background-color: #fff8e1;
+        border: 1px solid #ffe0b2;
+      }
+      .grading-result h3 {
+        color: var(--color-success);
+        margin-top: 0;
+        margin-bottom: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="main-wrapper">
+      <header class="page-header">
+        <a href="{% url 'student_assignment_list' %}" class="back-link"
+          >← Back to Assignments</a
+        >
+        <h1>{{ page_title }}</h1>
+      </header>
+
+      <div class="form-card submission-detail">
+        <h2>Assignment: {{ submission.assignment.title }}</h2>
+        <p><strong>Course:</strong> {{ submission.assignment.course.title }}</p>
+        <p>
+          <strong>Submitted On:</strong> {{ submission.submitted_at|date:"M j, Y
+          H:i" }} (Status:
+          <span class="status-{{ submission.status }}"
+            >{{ submission.get_status_display }}</span
+          >)
+        </p>
+
+        <hr
+          style="margin: 20px 0; border-top: 1px dashed var(--color-border)"
+        />
+
+        <h3>Your Submitted Content</h3>
+        <div class="submission-content-box">
+          <pre
+            style="
+              white-space: pre-wrap;
+              font-family: inherit;
+              margin: 0;
+              padding: 0;
+            "
+          >
+{{ submission.submission_content }}</pre
+          >
+        </div>
+
+        <hr style="margin: 20px 0; border-top: 2px solid var(--color-border)" />
+
+        <h2>Grading & Feedback</h2>
+
+        {% if submission.grade %}
+        <div class="grading-result">
+          <h3>✅ Graded!</h3>
+          <p>
+            <strong>Grade:</strong>
+            <span
+              style="
+                font-size: 1.2rem;
+                color: var(--color-primary);
+                font-weight: bold;
+              "
+              >{{ submission.grade }}</span
+            >
+          </p>
+          <p>
+            <strong>Graded On:</strong> {{ submission.graded_at|date:"M j, Y
+            H:i" }}
+          </p>
+          <p><strong>Feedback:</strong></p>
+          <div class="content-box">
+            {{ submission.feedback|linebreaksbr|default:"No specific feedback
+            provided." }}
+          </div>
+        </div>
+        {% else %}
+        <div class="grading-result pending">
+          <h3>⏱️ Awaiting Grading</h3>
+          <p>
+            Your submission is currently under review by the lecturer. Check
+            back soon!
+          </p>
+        </div>
+        {% endif %} {% if can_edit %}
+        <div class="form-actions" style="margin-top: 20px">
+          <a
+            href="{% url 'student_submit_assignment' submission.assignment.id %}"
+            class="btn-secondary"
+          >
+            Edit Submission
+          </a>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </body>
+</html>

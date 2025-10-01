@@ -1,0 +1,157 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin - Attendance Editor</title>
+    <link rel="stylesheet" href="{% static 'users/css/style.css' %}" />
+    <style>
+        .attendance-filters {
+            display: flex;
+            gap: 15px;
+            align-items: flex-end;
+            margin-bottom: 25px;
+            padding: 20px;
+            background-color: var(--color-card-bg);
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .attendance-filters .form-group {
+            margin-bottom: 0;
+            flex-grow: 1;
+        }
+        .attendance-filters button {
+            flex-shrink: 0;
+            padding: 10px 20px;
+        }
+        .attendance-grid {
+            display: grid;
+            grid-template-columns: 3fr 1fr 1fr;
+            padding: 10px 15px;
+            align-items: center;
+        }
+        .attendance-grid.list-header {
+            background-color: #f0f4f8;
+            border-bottom: 2px solid var(--color-primary);
+            font-weight: 600;
+            color: var(--color-text);
+        }
+        .attendance-grid.list-item {
+            border-bottom: 1px solid var(--color-border);
+        }
+        .attendance-grid.list-item:nth-child(even) {
+            background-color: #fcfdff;
+        }
+        .attendance-grid select {
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid var(--color-border);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .attendance-filters {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-wrapper">
+        <header class="page-header">
+            <a href="{% url 'dashboard' %}" class="back-link">← Back to Dashboard</a>
+            <h1>Admin Attendance Editor</h1>
+        </header>
+
+        {% if messages %}
+            <div class="messages-container">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <form method="get" class="attendance-filters" action="{% url 'admin_attendance' %}">
+            <div class="form-group">
+                <label for="course_select">Select Course/Unit:</label>
+                <select name="course_id" id="course_select" required class="form-select">
+                    <option value="">--- Select a Course ---</option>
+                    {% for course in courses %}
+                        <option value="{{ course.id }}" {% if course.id|stringformat:"s" == selected_course_id %}selected{% endif %}>
+                            {{ course.title }} ({{ course.lecturer.get_full_name }})
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="date_input">Select Date:</label>
+                <input type="date" name="date" id="date_input" value="{{ selected_date }}" required class="form-input" />
+            </div>
+            
+            <button type="submit" class="btn-primary">View/Edit Attendance</button>
+        </form>
+
+        {% if course_context and selected_date %}
+            <div class="list-container">
+                <h2 style="padding: 15px;">Attendance for: {{ course_context.title }} on {{ selected_date }}</h2>
+
+                <!-- The POST action is directed back to the same URL with query parameters -->
+                <form method="post" action="{% url 'admin_attendance' %}?course_id={{ selected_course_id }}&date={{ selected_date }}">
+                    {% csrf_token %}
+                    
+                    <div class="attendance-grid list-header">
+                        <span>Student Name</span>
+                        <span>Student Role</span>
+                        <span>Status</span>
+                    </div>
+
+                    {% for record in attendance_records %}
+                        <div class="attendance-grid list-item">
+                            <span>{{ record.student.get_full_name }}</span>
+                            <span>{{ record.student.get_role_display }}</span>
+                            <span>
+                                <!-- 
+                                    If record.id exists (it's an existing record), name the field based on ID for update.
+                                    If record.id is None (it's a new record being created), use 'initial_status' and pass the student_id via hidden field.
+                                -->
+                                <select name="{% if record.id %}status_{{ record.id }}{% else %}initial_status{% endif %}" required>
+                                    {% for value, label in status_choices %}
+                                        <option value="{{ value }}" {% if record.status == value %}selected{% endif %}>
+                                            {{ label }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                                {% if not record.id %}
+                                    <!-- Hidden field to pass student ID for bulk creation of new records -->
+                                    <input type="hidden" name="student_id" value="{{ record.student.id }}" />
+                                {% endif %}
+                            </span>
+                        </div>
+                    {% empty %}
+                        <p style="padding: 15px;">No students enrolled in this course or error fetching records.</p>
+                    {% endfor %}
+                    
+                    {% if attendance_records %}
+                        <div class="form-actions" style="padding: 15px; background-color: #f7f9fc; border-top: 1px solid var(--color-border);">
+                            <button type="submit" class="btn-primary">
+                                {% if attendance_records.0.id %}
+                                    Save Attendance Changes
+                                {% else %}
+                                    Create and Save New Session
+                                {% endif %}
+                            </button>
+                        </div>
+                    {% endif %}
+                </form>
+            </div>
+        {% else %}
+            <p class="empty-state" style="margin-top: 30px;">Please select a Course and a Date to view or edit attendance records.</p>
+        {% endif %}
+    </div>
+</body>
+</html>

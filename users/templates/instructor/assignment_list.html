@@ -1,0 +1,86 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ page_title }}</title>
+    <link rel="stylesheet" href="{% static 'users/css/style.css' %}" />
+  </head>
+  <body>
+    <div class="main-wrapper">
+      <header class="page-header">
+        <a href="{% url 'dashboard' %}" class="back-link"
+          >← Back to Dashboard</a
+        >
+        <h1>{{ page_title }} ({{ assignments|length }})</h1>
+        <a
+          href="{% url 'instructor_assignment_create' %}"
+          class="btn-primary action-link"
+        >
+          + New Assignment
+        </a>
+      </header>
+
+      {% if messages %}
+      <div class="messages-container">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <div class="list-container">
+        <div class="list-header assignment-header">
+          <span>Assignment Title</span>
+          <span>Course</span>
+          <span>Due Date</span>
+          <span>Actions</span>
+        </div>
+
+        {% for assignment in assignments %}
+        <div class="list-item assignment-item">
+          <span class="assign-title">{{ assignment.title }}</span>
+          <span class="assign-course">{{ assignment.course.title }}</span>
+          <span class="assign-due"
+            >{{ assignment.due_date|date:"M j, Y" }}</span
+          >
+          <span class="assign-actions">
+            <a
+              href="{% url 'instructor_assignment_edit' assignment.id %}"
+              class="btn-secondary btn-small"
+              >Edit</a
+            >
+
+            <!-- Delete Form -->
+            <form
+              method="post"
+              action="{% url 'instructor_assignment_list' %}"
+              style="display: inline"
+            >
+              {% csrf_token %}
+              <input
+                type="hidden"
+                name="assignment_id"
+                value="{{ assignment.id }}"
+              />
+              <button
+                type="submit"
+                name="delete_assignment"
+                class="btn-danger btn-small"
+                onclick="return confirm('WARNING: Are you sure you want to PERMANENTLY DELETE the assignment: {{ assignment.title }}? This will delete all student submissions.')"
+              >
+                Delete
+              </button>
+            </form>
+          </span>
+        </div>
+        {% empty %}
+        <p class="empty-state">
+          No assignments have been created for your courses yet.
+        </p>
+        {% endfor %}
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,80 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin - {{ page_title }}</title>
+    <link rel="stylesheet" href="{% static 'users/css/style.css' %}" />
+  </head>
+  <body>
+    <div class="main-wrapper">
+      <header class="page-header">
+        <a href="{% url 'admin_course_list' %}" class="back-link"
+          >← Back to Course List</a
+        >
+        <h1>{{ page_title }}</h1>
+      </header>
+
+      {% if messages %}
+      <div class="messages-container">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <div class="form-card">
+        <form method="post">
+          {% csrf_token %}
+
+          <!-- Display general course info fields -->
+          <div class="form-group">
+            <label for="{{ form.title.id_for_label }}"
+              >{{ form.title.label }}</label
+            >
+            {{ form.title }}
+          </div>
+
+          <div class="form-group">
+            <label for="{{ form.description.id_for_label }}"
+              >{{ form.description.label }}</label
+            >
+            {{ form.description }}
+          </div>
+
+          <!-- Display Lecturer selection -->
+          <div class="form-group">
+            <label for="{{ form.lecturer.id_for_label }}"
+              >{{ form.lecturer.label }}</label
+            >
+            {{ form.lecturer }} {% for error in form.lecturer.errors %}
+            <p class="error-message">{{ error }}</p>
+            {% endfor %}
+          </div>
+
+          <hr
+            style="margin: 20px 0; border-top: 1px solid var(--color-border)"
+          />
+
+          <!-- Display Students enrollment (ManyToMany) field -->
+          <div class="form-group">
+            <label for="{{ form.students.id_for_label }}"
+              >{{ form.students.label }} (Hold CTRL/CMD to select
+              multiple)</label
+            >
+            {{ form.students }}
+            <small class="help-text">{{ form.students.help_text }}</small>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn-primary">
+              {% if is_edit %}Save Course Changes{% else %}Create Course{% endif
+              %}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

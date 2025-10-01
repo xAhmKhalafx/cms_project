@@ -1,19 +1,65 @@
 {% load static %}
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <title>CMS Landing Page</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Aurora State University - Course Management System</title>
     <link
       rel="stylesheet"
       type="text/css"
-      href="{% static 'users/css/style.css' %}"
+      href="{% static 'css/style.css' %}"
     />
   </head>
   <body>
-    <div class="container">
-      <h1>Welcome to University CMS</h1>
-      <a href="{% url 'login' %}">Login</a> |
-      <a href="{% url 'signup' %}">Sign Up</a>
+    <div class="landing-container">
+      <header class="landing-header">
+        <img
+          src="{% static 'images/asu_logo.png' %}"
+          alt="Aurora State University Logo"
+          class="logo"
+        />
+        <h1>Aurora State University</h1>
+        <p class="tagline">Empowering Minds. Shaping the Future.</p>
+      </header>
+
+      <main class="landing-content">
+        <section class="intro">
+          <h2>Welcome to the ASU Course Management System (CMS)</h2>
+          <p>
+            The ASU CMS is a comprehensive digital platform designed to simplify
+            and enhance the learning experience for students and faculty. From
+            managing assignments to tracking course progress, our CMS provides
+            an all-in-one solution to keep you organized and engaged throughout
+            your academic journey.
+          </p>
+          <p>
+            Whether you’re a student submitting coursework, an instructor
+            uploading materials, or an administrator managing classes, the ASU
+            CMS ensures a seamless and secure experience across all devices.
+          </p>
+        </section>
+
+        <section class="features">
+          <h3>Key Features:</h3>
+          <ul>
+            <li>📘 Easy course and assignment management</li>
+            <li>🔒 Secure user authentication and access control</li>
+            <li>📊 Real-time performance tracking and analytics</li>
+            <li>💬 Communication tools for faculty and students</li>
+            <li>☁️ Cloud-based storage for submissions and resources</li>
+          </ul>
+        </section>
+
+        <div class="auth-links">
+          <a href="{% url 'login' %}" class="btn login-btn">Login</a>
+          <a href="{% url 'signup' %}" class="btn signup-btn">Sign Up</a>
+        </div>
+      </main>
+
+      <footer class="landing-footer">
+        <p>&copy; 2025 Aurora State University | All Rights Reserved</p>
+      </footer>
     </div>
   </body>
 </html>

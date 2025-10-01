@@ -1,0 +1,59 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin - {{ page_title }}</title>
+    <link rel="stylesheet" href="{% static 'users/css/style.css' %}" />
+  </head>
+  <body>
+    <div class="main-wrapper">
+      <header class="page-header">
+        <a href="{% url 'admin_user_list' %}" class="back-link"
+          >← Back to User List</a
+        >
+        <h1>{{ page_title }}</h1>
+      </header>
+
+      {% if messages %}
+      <div class="messages-container">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <div class="form-card">
+        <form method="post">
+          {% csrf_token %} {% for field in form %}
+          <div class="form-group">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }} {% for error in field.errors %}
+            <p class="error-message">{{ error }}</p>
+            {% endfor %}
+          </div>
+          {% endfor %}
+
+          <div class="form-actions">
+            <button type="submit" class="btn-primary">
+              {% if is_edit %}Save Changes{% else %}Create User{% endif %}
+            </button>
+
+            {% if is_edit %}
+            <!-- Soft Delete Button (Only visible on edit view) -->
+            <button
+              type="submit"
+              name="delete_user"
+              class="btn-danger"
+              onclick="return confirm('Are you sure you want to SOFT DELETE this user? This action can be reversed by an admin.')"
+            >
+              Soft Delete User
+            </button>
+            {% endif %}
+          </div>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

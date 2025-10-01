@@ -1,0 +1,71 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin - User List</title>
+    <link rel="stylesheet" href="{% static 'users/css/style.css' %}" />
+  </head>
+  <body>
+    <div class="main-wrapper">
+      <header class="page-header">
+        <a href="{% url 'dashboard' %}" class="back-link"
+          >← Back to Dashboard</a
+        >
+        <h1>User Administration ({{ users|length }} Total)</h1>
+        <a href="{% url 'admin_user_create' %}" class="btn-primary action-link">
+          + Add New User
+        </a>
+      </header>
+
+      {% if messages %}
+      <div class="messages-container">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <div class="user-list-container">
+        <div class="list-header">
+          <span>Name</span>
+          <span>Email</span>
+          <span>Role</span>
+          <span>Status</span>
+          <span>Actions</span>
+        </div>
+
+        {% for user in users %}
+        <div
+          class="list-item user-item {% if user.role == 'admin' %}role-admin{% elif user.role == 'instructor' %}role-instructor{% else %}role-student{% endif %}"
+        >
+          <span class="user-name">{{ user.get_full_name }}</span>
+          <span class="user-email">{{ user.email }}</span>
+          <span class="user-role">{{ user.get_role_display }}</span>
+          <span class="user-status">
+            {% if user.is_deleted %}
+            <span class="status-deleted">DELETED</span>
+            {% elif user.is_active %}
+            <span class="status-active">Active</span>
+            {% else %}
+            <span class="status-inactive">Inactive</span>
+            {% endif %}
+          </span>
+          <span class="user-actions">
+            <a
+              href="{% url 'admin_user_edit' user.id %}"
+              class="btn-secondary btn-small"
+              >Edit</a
+            >
+          </span>
+        </div>
+        {% empty %}
+        <p class="empty-state">
+          No users found in the system (besides yourself).
+        </p>
+        {% endfor %}
+      </div>
+    </div>
+  </body>
+</html>

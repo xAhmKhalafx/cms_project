@@ -1,0 +1,105 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Assignments</title>
+    <link rel="stylesheet" href="{% static 'users/css/style.css' %}" />
+    <style>
+      .assignment-header,
+      .assignment-item {
+        grid-template-columns: 2.5fr 1.5fr 1fr 1fr 1fr;
+      }
+      .status-pending {
+        background-color: #ffc107;
+        color: #6a4a00;
+        padding: 3px 8px;
+        border-radius: 4px;
+        display: inline-block;
+      }
+      .status-graded {
+        background-color: #28a745;
+        color: white;
+        padding: 3px 8px;
+        border-radius: 4px;
+        display: inline-block;
+      }
+      .status-missed {
+        background-color: #dc3545;
+        color: white;
+        padding: 3px 8px;
+        border-radius: 4px;
+        display: inline-block;
+      }
+      .status-late {
+        background-color: #fd7e14;
+        color: white;
+        padding: 3px 8px;
+        border-radius: 4px;
+        display: inline-block;
+      }
+      .list-item-grid span {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="main-wrapper">
+      <header class="page-header">
+        <a href="{% url 'dashboard' %}" class="back-link"
+          >← Back to Dashboard</a
+        >
+        <h1>{{ page_title }} ({{ assignments|length }} Total)</h1>
+      </header>
+
+      {% if messages %}
+      <div class="messages-container">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <div class="list-container">
+        <div class="list-header assignment-header">
+          <span>Assignment Title</span>
+          <span>Course</span>
+          <span>Due Date</span>
+          <span>Status</span>
+          <span>Action</span>
+        </div>
+
+        {% for item in assignments %}
+        <div class="list-item assignment-item">
+          <span>{{ item.assignment.title }}</span>
+          <span>{{ item.assignment.course.title }}</span>
+          <span>{{ item.assignment.due_date|date:"M j, Y H:i" }}</span>
+          <span class="status-{{ item.status|slugify }}">
+            {{ item.status }} {% if item.submission and item.submission.grade
+            %}({{ item.submission.grade }}){% endif %}
+          </span>
+          <span class="sub-actions">
+            {% if item.action_url %}
+            <a
+              href="{% url item.action_url item.action_id %}"
+              class="btn-primary btn-small"
+            >
+              {% if item.submission %} View / Edit {% else %} Submit {% endif %}
+            </a>
+            {% else %}
+            <span class="text-gray-500">N/A</span>
+            {% endif %}
+          </span>
+        </div>
+        {% empty %}
+        <p class="empty-state">
+          No assignments are currently posted for your enrolled courses.
+        </p>
+        {% endfor %}
+      </div>
+    </div>
+  </body>
+</html>

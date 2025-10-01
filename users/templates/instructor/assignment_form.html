@@ -1,0 +1,76 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Instructor - {{ page_title }}</title>
+    <link rel="stylesheet" href="{% static 'users/css/style.css' %}" />
+  </head>
+  <body>
+    <div class="main-wrapper">
+      <header class="page-header">
+        <a href="{% url 'instructor_assignment_list' %}" class="back-link"
+          >← Back to Assignments</a
+        >
+        <h1>{{ page_title }}</h1>
+      </header>
+
+      {% if messages %}
+      <div class="messages-container">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <div class="form-card">
+        <form method="post">
+          {% csrf_token %}
+
+          <!-- Course Selection (Restricted to Instructor's Courses) -->
+          <div class="form-group">
+            <label for="{{ form.course.id_for_label }}"
+              >{{ form.course.label }}</label
+            >
+            {{ form.course }} {% for error in form.course.errors %}
+            <p class="error-message">{{ error }}</p>
+            {% endfor %}
+          </div>
+
+          <!-- Assignment Title -->
+          <div class="form-group">
+            <label for="{{ form.title.id_for_label }}"
+              >{{ form.title.label }}</label
+            >
+            {{ form.title }}
+          </div>
+
+          <!-- Description -->
+          <div class="form-group">
+            <label for="{{ form.description.id_for_label }}"
+              >{{ form.description.label }}</label
+            >
+            {{ form.description }}
+          </div>
+
+          <!-- Due Date -->
+          <div class="form-group">
+            <label for="{{ form.due_date.id_for_label }}"
+              >{{ form.due_date.label }}</label
+            >
+            {{ form.due_date }} {% for error in form.due_date.errors %}
+            <p class="error-message">{{ error }}</p>
+            {% endfor %}
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn-primary">
+              {% if is_edit %}Save Changes{% else %}Create Assignment{% endif %}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

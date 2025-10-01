@@ -3,13 +3,15 @@
 <html>
   <head>
     <title>Login</title>
-    <link rel="stylesheet" href="{% static 'users/css/style.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
   </head>
   <body>
     <div class="auth-container">
       <h1>Login</h1>
       <form method="post">
-        {% csrf_token %} {{ form.as_p }}
+        {% csrf_token %} {% if next %}
+        <input type="hidden" name="next" value="{{ next }}" />
+        {% endif %} {{ form.as_p }}
         <button type="submit">Login</button>
       </form>
       <a href="{% url 'signup' %}">Sign Up</a>

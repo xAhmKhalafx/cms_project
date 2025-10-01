@@ -1,0 +1,115 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ page_title }}</title>
+    <link rel="stylesheet" href="{% static 'users/css/style.css' %}" />
+    <style>
+      .status-pending {
+        background-color: #ffc107;
+        color: #6a4a00;
+      }
+      .status-graded {
+        background-color: #28a745;
+        color: white;
+      }
+      .status-late {
+        background-color: #dc3545;
+        color: white;
+      }
+      .submission-header {
+        grid-template-columns: 2.5fr 2fr 1.5fr 1fr 0.8fr 1fr;
+      }
+      .submission-item {
+        grid-template-columns: 2.5fr 2fr 1.5fr 1fr 0.8fr 1fr;
+      }
+      .sub-status span {
+        padding: 3px 8px;
+        border-radius: 4px;
+        display: inline-block;
+      }
+      .sub-status {
+        text-align: center;
+      }
+
+      @media (max-width: 768px) {
+        .submission-header,
+        .submission-item {
+          grid-template-columns: 1fr 1fr;
+          gap: 5px;
+        }
+        .submission-header span:nth-child(2), /* Course */
+            .submission-header span:nth-child(4), /* Submitted Date */
+            .submission-item span:nth-child(2), 
+            .submission-item span:nth-child(4) {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="main-wrapper">
+      <header class="page-header">
+        <a href="{% url 'dashboard' %}" class="back-link"
+          >← Back to Dashboard</a
+        >
+        <h1>{{ page_title }} ({{ submissions|length }} Total)</h1>
+      </header>
+
+      {% if messages %}
+      <div class="messages-container">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <div class="list-container">
+        <div class="list-header submission-header">
+          <span>Assignment</span>
+          <span>Course</span>
+          <span>Student</span>
+          <span>Submitted</span>
+          <span>Grade</span>
+          <span>Actions</span>
+        </div>
+
+        {% for submission in submissions %}
+        <div class="list-item submission-item">
+          <span class="sub-assignment">{{ submission.assignment.title }}</span>
+          <span class="sub-course"
+            >{{ submission.assignment.course.title }}</span
+          >
+          <span class="sub-student"
+            >{{ submission.student.get_full_name }}</span
+          >
+          <span class="sub-date"
+            >{{ submission.submitted_at|date:"M j, H:i" }}</span
+          >
+          <span class="sub-grade">
+            {% if submission.grade %}
+            <strong>{{ submission.grade }}</strong>
+            {% else %}
+            <span class="status-pending">Pending</span>
+            {% endif %}
+          </span>
+          <span class="sub-actions">
+            <a
+              href="{% url 'instructor_grade_submission' submission.id %}"
+              class="btn-primary btn-small"
+            >
+              {% if submission.grade %} Edit Grade {% else %} Grade {% endif %}
+            </a>
+          </span>
+        </div>
+        {% empty %}
+        <p class="empty-state">
+          No student submissions found for your courses yet.
+        </p>
+        {% endfor %}
+      </div>
+    </div>
+  </body>
+</html>
