@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}My Submissions · Uni CMS{% endblock %}
+{% block content %}
+<h3>My Submissions</h3>
+<table class="table table-striped">
+  <thead><tr><th>Course</th><th>Assignment</th><th>Submitted</th><th>Grade</th><th>Feedback</th></tr></thead>
+  <tbody>
+  {% for s in submissions %}
+    <tr>
+      <td>{{ s.assignment.course.title }}</td>
+      <td>{{ s.assignment.title }}</td>
+      <td>{{ s.submitted_at }}</td>
+      <td>{{ s.grade|default:"—" }}</td>
+      <td>{{ s.feedback|default:"—" }}</td>
+    </tr>
+  {% empty %}
+    <tr><td colspan="5" class="text-muted">No submissions yet.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
