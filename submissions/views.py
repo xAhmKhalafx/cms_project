@@ -1,10 +1,12 @@
-from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from assignments.models import Assignment
-from users.models import Student
-from .models import Submission
 from .forms import SubmissionForm
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+from .models import Submission
+from courses.models import Enrollment
+
 
 @login_required
 def submit_assignment_page(request, assignment_id):
@@ -14,6 +16,11 @@ def submit_assignment_page(request, assignment_id):
 
     assignment = get_object_or_404(Assignment, pk=assignment_id)
     student = request.user.student_profile
+
+    is_enrolled = Enrollment.objects.filter(course=assignment.course, student=student).exists()
+    if not is_enrolled:
+        messages.error(request, "You must be enrolled in this course to submit.")
+        return redirect("course-detail-page", course_id=assignment.course_id)
 
     if request.method == "POST":
         form = SubmissionForm(request.POST, request.FILES)
@@ -54,3 +61,11 @@ def grade_submission_page(request, submission_id):
         return redirect("submissions-list-page", assignment_id=submission.assignment_id)
 
     return render(request, "submissions/grade_form.html", {"submission": submission})
+@login_required
+def my_submissions_page(request):
+    if not hasattr(request.user, "student_profile"):
+        return redirect("dashboard")
+    subs = Submission.objects.select_related("assignment__course").filter(
+        student=request.user.student_profile
+    ).order_by("-submitted_at")
+    return render(request, "submissions/my_submissions.html", {"submissions": subs})

@@ -1,5 +1,5 @@
 from django.db import models
-from users.models import Lecturer
+from users.models import Lecturer, Student
 
 class Course(models.Model):
     course_id = models.AutoField(primary_key=True)
@@ -13,3 +13,17 @@ class Course(models.Model):
 
     class Meta:
         indexes = [models.Index(fields=["title"])]
+
+class Enrollment(models.Model):
+    enrollment_id = models.AutoField(primary_key=True)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name="enrollments")
+    course  = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="enrollments")
+    enrolled_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["student", "course"], name="uq_enrollment_student_course")
+        ]
+
+    def __str__(self):
+        return f"{self.student} -> {self.course}"

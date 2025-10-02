@@ -22,6 +22,7 @@ def user_logout(request):
     logout(request)
     return redirect("login")
 
+
 @login_required
 def dashboard(request):
     # Simple role check
@@ -46,3 +47,4 @@ def console_home(request):
         "recent_assignments": recent_assignments,
         "recent_submissions": recent_subs
     })
+
