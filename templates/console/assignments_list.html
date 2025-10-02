@@ -3,8 +3,10 @@
 {% block hero %}<div class="hero"><div><h1 class="display-6">Assignments</h1></div></div>{% endblock %}
 {% block content %}
 <div class="d-flex justify-content-between mb-3">
+  <a class="btn btn-success" href="{% url 'console-assignments-create' %}">Add Assignment</a>
   <a class="btn btn-outline-secondary" href="{% url 'console-home' %}">Back to Console</a>
 </div>
+
 <table class="table table-hover">
   <thead><tr><th>Title</th><th>Course</th><th>Due</th><th></th></tr></thead>
   <tbody>

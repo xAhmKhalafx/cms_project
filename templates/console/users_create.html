@@ -1,30 +1,117 @@
 {% extends "base.html" %}{% load form_extras %}
 {% block title %}Create User{% endblock %}
-{% block hero %}<div class="hero"><div><h1 class="display-6">Create User</h1></div></div>{% endblock %}
+{% block hero %}<div class="hero"><div><h1 class="display-6">Create User</h1><p class="mb-0">Choose a role first — fields will adjust.</p></div></div>{% endblock %}
+
 {% block content %}
 <form method="post" class="card p-3">{% csrf_token %}
   <h5 class="mb-3">Account</h5>
-  {{ uform.username|add_class:"form-control mb-2" }}
-  {{ uform.first_name|add_class:"form-control mb-2" }}
-  {{ uform.last_name|add_class:"form-control mb-2" }}
-  {{ uform.email|add_class:"form-control mb-2" }}
-  {{ uform.password|add_class:"form-control mb-2" }}
-  <div class="mb-3">
-    <label class="form-label">Role</label>
-    {{ uform.role|add_class:"form-select" }}
+
+  <div class="row g-3">
+    <div class="col-md-6">
+      <label class="form-label">Username</label>
+      {{ uform.username|add_class:"form-control" }}
+    </div>
+    <div class="col-md-6">
+      <label class="form-label">Email</label>
+      {{ uform.email|add_class:"form-control" }}
+    </div>
+    <div class="col-md-6">
+      <label class="form-label">First name</label>
+      {{ uform.first_name|add_class:"form-control" }}
+    </div>
+    <div class="col-md-6">
+      <label class="form-label">Last name</label>
+      {{ uform.last_name|add_class:"form-control" }}
+    </div>
+    <div class="col-md-6">
+      <label class="form-label">Password</label>
+      {{ uform.password|add_class:"form-control" }}
+    </div>
+    <div class="col-md-6">
+      <label class="form-label">Role</label>
+      {{ uform.role|add_class:"form-select" }}
+    </div>
   </div>
 
-  <h6 class="mt-3">Student Details (if role = Student)</h6>
-  {{ sform.student_number|add_class:"form-control mb-2" }}
-  {{ sform.program|add_class:"form-control mb-2" }}
+  <hr class="my-4">
 
-  <h6 class="mt-3">Lecturer Details (if role = Lecturer)</h6>
-  {{ lform.employee_number|add_class:"form-control mb-2" }}
-  {{ lform.department|add_class:"form-control mb-2" }}
+  <div id="student-section" class="role-section">
+    <h6 class="mb-2">Student Details</h6>
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label">Student number</label>
+        {{ sform.student_number|add_class:"form-control" }}
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Program</label>
+        {{ sform.program|add_class:"form-control" }}
+      </div>
+    </div>
+  </div>
 
-  <div class="d-flex gap-2 mt-3">
+  <div id="lecturer-section" class="role-section">
+    <h6 class="mb-2">Lecturer Details</h6>
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label">Employee number</label>
+        {{ lform.employee_number|add_class:"form-control" }}
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Department</label>
+        {{ lform.department|add_class:"form-control" }}
+      </div>
+    </div>
+  </div>
+
+  <div class="d-flex gap-2 mt-4">
     <button class="btn btn-success">Create</button>
     <a class="btn btn-outline-secondary" href="{% url 'console-users-list' %}">Cancel</a>
   </div>
 </form>
+
+{% block extra_js %}
+<script>
+(function(){
+  const roleSelect = document.getElementById("id_role");
+  const studentSection = document.getElementById("student-section");
+  const lecturerSection = document.getElementById("lecturer-section");
+
+  function setDisabled(section, disabled) {
+    section.querySelectorAll("input, select, textarea").forEach(el => {
+      if (disabled) {
+        el.setAttribute("disabled", "disabled");
+      } else {
+        el.removeAttribute("disabled");
+      }
+    });
+  }
+
+  function updateRoleUI() {
+    const role = roleSelect.value;
+    if (role === "student") {
+      studentSection.style.display = "";
+      lecturerSection.style.display = "none";
+      setDisabled(studentSection, false);
+      setDisabled(lecturerSection, true);
+    } else if (role === "lecturer") {
+      studentSection.style.display = "none";
+      lecturerSection.style.display = "";
+      setDisabled(studentSection, true);
+      setDisabled(lecturerSection, false);
+    } else {
+      // default: hide both if nothing selected
+      studentSection.style.display = "none";
+      lecturerSection.style.display = "none";
+      setDisabled(studentSection, true);
+      setDisabled(lecturerSection, true);
+    }
+  }
+
+  // initial
+  updateRoleUI();
+  // on change
+  roleSelect.addEventListener("change", updateRoleUI);
+})();
+</script>
+{% endblock %}
 {% endblock %}
