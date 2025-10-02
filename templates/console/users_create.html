@@ -1,0 +1,30 @@
+{% extends "base.html" %}{% load form_extras %}
+{% block title %}Create User{% endblock %}
+{% block hero %}<div class="hero"><div><h1 class="display-6">Create User</h1></div></div>{% endblock %}
+{% block content %}
+<form method="post" class="card p-3">{% csrf_token %}
+  <h5 class="mb-3">Account</h5>
+  {{ uform.username|add_class:"form-control mb-2" }}
+  {{ uform.first_name|add_class:"form-control mb-2" }}
+  {{ uform.last_name|add_class:"form-control mb-2" }}
+  {{ uform.email|add_class:"form-control mb-2" }}
+  {{ uform.password|add_class:"form-control mb-2" }}
+  <div class="mb-3">
+    <label class="form-label">Role</label>
+    {{ uform.role|add_class:"form-select" }}
+  </div>
+
+  <h6 class="mt-3">Student Details (if role = Student)</h6>
+  {{ sform.student_number|add_class:"form-control mb-2" }}
+  {{ sform.program|add_class:"form-control mb-2" }}
+
+  <h6 class="mt-3">Lecturer Details (if role = Lecturer)</h6>
+  {{ lform.employee_number|add_class:"form-control mb-2" }}
+  {{ lform.department|add_class:"form-control mb-2" }}
+
+  <div class="d-flex gap-2 mt-3">
+    <button class="btn btn-success">Create</button>
+    <a class="btn btn-outline-secondary" href="{% url 'console-users-list' %}">Cancel</a>
+  </div>
+</form>
+{% endblock %}

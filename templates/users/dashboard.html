@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Dashboard · Uni CMS{% endblock %}
+
+{% block hero %}
+<div class="hero">
+  <div>
+    <h1 class="display-6 mb-2">Welcome to Your University</h1>
+    <p class="lead mb-0">Manage courses, assignments and submissions in one place.</p>
+  </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="row g-3">
+  <div class="col-md-4">
+    <div class="card hover">
+      <div class="card-body">
+        <h5 class="card-title">Courses</h5>
+        <p class="card-text">Browse and manage course offerings.</p>
+        <a href="{% url 'course-list-page' %}" class="btn btn-primary">Open Courses</a>
+      </div>
+    </div>
+  </div>
+
+  {% if role == "lecturer" or user.is_staff %}
+  <div class="col-md-4">
+    <div class="card hover">
+      <div class="card-body">
+        <h5 class="card-title">Admin Console</h5>
+        <p class="card-text">Create assignments, view submissions, and grade.</p>
+        <a href="{% url 'console-home' %}" class="btn btn-success">Open Console</a>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="col-md-4">
+    <div class="card hover">
+      <div class="card-body">
+        <h5 class="card-title">Help & Docs</h5>
+        <p class="card-text">See the user guide and submission rules.</p>
+        <a href="#" class="btn btn-outline-secondary">View Guide</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

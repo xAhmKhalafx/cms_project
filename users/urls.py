@@ -1,10 +1,18 @@
-# users/urls.py
 from django.urls import path
-from . import views
+from .views import dashboard, user_login, user_logout, console_home
+from . import console_views
 
 urlpatterns = [
-    path("me/", views.me, name="users-me"),
-    path("students/", views.list_students, name="users-students"),
-    path("lecturers/", views.list_lecturers, name="users-lecturers"),
-    path("create/", views.create_user, name="users-create"),  # optional helper
+    path('', dashboard, name='dashboard'),
+    path('login/', user_login, name='login'),
+    path('logout/', user_logout, name='logout'),
+
+    path('console/', console_home, name='console-home'),
+    path('accounts/login/', user_login, name='accounts-login'),
+
+    # USERS CRUD in console
+    path('console/users/', console_views.users_list, name='console-users-list'),
+    path('console/users/new/', console_views.users_create, name='console-users-create'),
+    path('console/users/<int:user_id>/edit/', console_views.users_edit, name='console-users-edit'),
+    path('console/users/<int:user_id>/delete/', console_views.users_delete, name='console-users-delete'),
 ]

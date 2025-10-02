@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}Admin Console · Uni CMS{% endblock %}
+{% block hero %}
+<div class="hero">
+  <div>
+    <h1 class="display-6">Admin Console</h1>
+    <p class="mb-0">Manage courses, assignments and submissions.</p>
+  </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="row g-3">
+  <div class="col-md-4">
+    <div class="card text-center hover">
+      <div class="card-body">
+        <div class="display-6">{{ stats.courses }}</div>
+        <div class="text-muted">Courses</div>
+        <a class="btn btn-outline-primary mt-2" href="{% url 'console-courses-list' %}">Manage Courses</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card text-center hover">
+      <div class="card-body">
+        <div class="display-6">{{ stats.assignments }}</div>
+        <div class="text-muted">Assignments</div>
+        <a class="btn btn-outline-primary mt-2" href="{% url 'console-assignments-list' %}">Manage Assignments</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card text-center hover">
+      <div class="card-body">
+        <div class="display-6">{{ stats.user }}</div>
+        <div class="text-muted">Users</div>
+        <a class="btn btn-outline-primary mt-2" href="{% url 'console-users-list' %}">Manage Users</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3 mt-1">
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header">Recent Assignments</div>
+      <ul class="list-group list-group-flush">
+        {% for a in recent_assignments %}
+          <li class="list-group-item d-flex justify-content-between">
+            <div>
+              <div class="fw-semibold">{{ a.title }}</div>
+              <div class="small text-muted">{{ a.course.title }} · Due {{ a.due_date }}</div>
+            </div>
+            <a class="btn btn-sm btn-outline-dark" href="{% url 'submissions-list-page' a.assignment_id %}">Submissions</a>
+          </li>
+        {% empty %}
+          <li class="list-group-item text-muted">No recent assignments.</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header">Recent Submissions</div>
+      <ul class="list-group list-group-flush">
+        {% for s in recent_submissions %}
+          <li class="list-group-item d-flex justify-content-between">
+            <div>
+              <div class="fw-semibold">
+                {{ s.student.user.get_full_name|default:s.student.user.username }}
+              </div>
+              <div class="small text-muted">
+                {{ s.assignment.title }} · {{ s.submitted_at }}
+              </div>
+            </div>
+            <a class="btn btn-sm btn-outline-primary" href="{% url 'submission-grade-page' s.submission_id %}">Grade</a>
+          </li>
+        {% empty %}
+          <li class="list-group-item text-muted">No recent submissions.</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}

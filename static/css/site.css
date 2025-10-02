@@ -1,0 +1,31 @@
+/* general spacing */
+main.container { padding-top: 2rem; padding-bottom: 3rem; }
+.navbar-brand img { height: 36px; vertical-align: middle; margin-right: .5rem; }
+
+/* hero section */
+.hero {
+  background: url('/static/img/hero-campus.jpg') center/cover no-repeat;
+  border-radius: .75rem;
+  min-height: 220px;
+  display: flex; align-items: center;
+  color: #fff; padding: 2rem;
+  box-shadow: 0 10px 25px rgba(0,0,0,.15);
+}
+.hero h1 { text-shadow: 0 2px 6px rgba(255,255,255,.35); }
+
+/* cards */
+.card.hover { transition: transform .15s ease, box-shadow .15s ease; }
+.card.hover:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,.08); }
+
+/* footer */
+.footer {
+  border-top: 1px solid rgba(0,0,0,.06); margin-top: 3rem; padding: 1.25rem 0;
+  color: #6c757d; font-size: .95rem;
+}
+
+h1{
+color: rgb(255,255,255)
+}
+
+/* forms */
+form .form-control, form .form-select { padding: .6rem .75rem; }

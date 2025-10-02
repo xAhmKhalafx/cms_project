@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}{{ course.title }} · Uni CMS{% endblock %}
+
+{% block hero %}
+<div class="hero">
+  <div>
+    <h1 class="display-6">{{ course.title }}</h1>
+    <p class="mb-0">
+      {{ course.semester }}
+      {% if course.lecturer %} · Lecturer: {% if course.lecturer.user.get_full_name %}{{ course.lecturer.user.get_full_name }}{% else %}{{ course.lecturer.user.username }}{% endif %}{% endif %}
+    </p>
+  </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="row g-3">
+  <div class="col-md-8">
+    <div class="card">
+      <div class="card-body">
+        <h5>About this course</h5>
+        <p class="mb-0">{{ course.description|default:"No description." }}</p>
+      </div>
+    </div>
+
+    <div class="card mt-3">
+      <div class="card-body">
+        <h5 class="mb-3">Assignments</h5>
+        <div class="list-group">
+          {% for a in assignments %}
+            <div class="list-group-item d-flex justify-content-between align-items-center">
+              <div>
+                <div class="fw-semibold">{{ a.title }}</div>
+                <div class="text-muted small">Due {{ a.due_date }}</div>
+              </div>
+              <div>
+                {% if user.student_profile %}
+                  <a class="btn btn-sm btn-primary" href="{% url 'submission-create-page' a.assignment_id %}">Submit</a>
+                {% elif user.lecturer_profile %}
+                  <a class="btn btn-sm btn-outline-dark" href="{% url 'submissions-list-page' a.assignment_id %}">View Submissions</a>
+                {% endif %}
+              </div>
+            </div>
+          {% empty %}
+            <div class="text-muted">No assignments yet.</div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="card">
+      <div class="card-body">
+        <h5>Quick Actions</h5>
+        <div class="d-grid gap-2">
+          {% if user.lecturer_profile %}
+            <a class="btn btn-success" href="{% url 'assignment-create-page' course.course_id %}">Create Assignment</a>
+          {% endif %}
+          <a class="btn btn-outline-secondary" href="{% url 'course-list-page' %}">Back to Courses</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

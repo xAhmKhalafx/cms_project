@@ -1,63 +1,48 @@
-# users/views.py
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from django.contrib.auth.models import User
-from .serializers import UserSerializer, UserCreateSerializer, StudentSerializer, LecturerSerializer
-from .models import Student, Lecturer
-from django.http import HttpResponse  # add this import if not present
 from django.shortcuts import render, redirect
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib import messages
-# users/views.py
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 
-@login_required
-def dashboard_page(request):
-    # You can pass real data later; this is a working stub.
-    return render(request, "users/dashboard.html", {"username": request.user.username})
+from courses.models import Course
+from assignments.models import Assignment
+from submissions.models import Submission
 
-def signup_page(request):
-    """
-    Display a signup form and create a new Django auth user.
-    """
+
+def user_login(request):
     if request.method == "POST":
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            form.save()  # creates new auth.User
-            messages.success(request, "Account created! You can log in now.")
-            return redirect("login")  # or redirect("landing") if you prefer
-    else:
-        form = UserCreationForm()
-    return render(request, "users/signup.html", {"form": form})
+        u = request.POST.get("username")
+        p = request.POST.get("password")
+        user = authenticate(request, username=u, password=p)
+        if user:
+            login(request, user)
+            return redirect("dashboard")
+        return render(request, "users/login.html", {"error": "Invalid credentials"})
+    return render(request, "users/login.html")
 
+def user_logout(request):
+    logout(request)
+    return redirect("login")
 
-def landing_page(request):
-    return HttpResponse("University CMS is running ✅")
+@login_required
+def dashboard(request):
+    # Simple role check
+    role = "student" if hasattr(request.user, "student_profile") else "lecturer" if hasattr(request.user, "lecturer_profile") else "admin" if request.user.is_staff else "guest"
+    return render(request, "users/dashboard.html", {"role": role})
 
-@api_view(["GET"])
-def me(request):
-    """Return basic info about the current user (if logged in)."""
-    if request.user.is_authenticated:
-        return Response(UserSerializer(request.user).data)
-    return Response({"detail": "Not authenticated"}, status=401)
+def console_home(request):
+    # Only staff or lecturers may access
+    if not (request.user.is_staff or hasattr(request.user, "lecturer_profile")):
+        return redirect("dashboard")
 
-@api_view(["GET"])
-def list_students(request):
-    qs = Student.objects.select_related("user").all()
-    data = StudentSerializer(qs, many=True).data
-    return Response(data)
+    stats = {
+        "courses": Course.objects.count(),
+        "assignments": Assignment.objects.count(),
+        "submissions": Submission.objects.count(),
+    }
+    recent_assignments = Assignment.objects.select_related("course").order_by("-posted_at")[:6]
+    recent_subs = Submission.objects.select_related("assignment", "student__user").order_by("-submitted_at")[:6]
 
-@api_view(["GET"])
-def list_lecturers(request):
-    qs = Lecturer.objects.select_related("user").all()
-    data = LecturerSerializer(qs, many=True).data
-    return Response(data)
-
-@api_view(["POST"])
-def create_user(request):
-    """Optional helper for testing; remove if you don't need it."""
-    ser = UserCreateSerializer(data=request.data)
-    if ser.is_valid():
-        user = ser.save()
-        return Response(UserSerializer(user).data, status=201)
-    return Response(ser.errors, status=400)
+    return render(request, "console/home.html", {
+        "stats": stats,
+        "recent_assignments": recent_assignments,
+        "recent_submissions": recent_subs
+    })

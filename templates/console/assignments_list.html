@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Admin Console · Assignments{% endblock %}
+{% block hero %}<div class="hero"><div><h1 class="display-6">Assignments</h1></div></div>{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between mb-3">
+  <a class="btn btn-outline-secondary" href="{% url 'console-home' %}">Back to Console</a>
+</div>
+<table class="table table-hover">
+  <thead><tr><th>Title</th><th>Course</th><th>Due</th><th></th></tr></thead>
+  <tbody>
+  {% for a in assignments %}
+  <tr>
+    <td>{{ a.title }}</td>
+    <td>{{ a.course.title }}</td>
+    <td>{{ a.due_date }}</td>
+    <td class="text-end">
+      <a class="btn btn-sm btn-outline-primary" href="{% url 'console-assignments-edit' a.assignment_id %}">Edit</a>
+      <a class="btn btn-sm btn-outline-danger" href="{% url 'console-assignments-delete' a.assignment_id %}">Delete</a>
+    </td>
+  </tr>
+  {% empty %}
+    <tr><td colspan="4" class="text-muted">No assignments yet.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

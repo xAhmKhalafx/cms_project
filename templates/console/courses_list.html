@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Admin Console · Courses{% endblock %}
+{% block hero %}<div class="hero"><div><h1 class="display-6">Courses</h1></div></div>{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between mb-3">
+  <a class="btn btn-success" href="{% url 'console-courses-create' %}">Add Course</a>
+  <a class="btn btn-outline-secondary" href="{% url 'console-home' %}">Back to Console</a>
+</div>
+<table class="table table-hover">
+  <thead><tr><th>Title</th><th>Semester</th><th>Lecturer</th><th></th></tr></thead>
+  <tbody>
+  {% for c in courses %}
+    <tr>
+      <td>{{ c.title }}</td>
+      <td>{{ c.semester }}</td>
+      <td>
+        {% if c.lecturer %}
+          {{ c.lecturer.user.get_full_name|default:c.lecturer.user.username }}
+        {% else %}<span class="text-muted">TBA</span>{% endif %}
+      </td>
+      <td class="text-end">
+        <a class="btn btn-sm btn-outline-primary" href="{% url 'console-courses-edit' c.course_id %}">Edit</a>
+        <a class="btn btn-sm btn-outline-danger" href="{% url 'console-courses-delete' c.course_id %}">Delete</a>
+      </td>
+    </tr>
+  {% empty %}
+    <tr><td colspan="4" class="text-muted">No courses found.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

@@ -9,13 +9,9 @@ class Assignment(models.Model):
     due_date = models.DateField()
     posted_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        indexes = [models.Index(fields=["course", "due_date"])]
+        constraints = [models.UniqueConstraint(fields=["course", "title"], name="uq_assignment_course_title")]
+
     def __str__(self):
         return f"{self.title} • {self.course.title}"
-
-    class Meta:
-        indexes = [
-            models.Index(fields=["course", "due_date"]),
-        ]
-        constraints = [
-            models.UniqueConstraint(fields=["course", "title"], name="uq_assignment_course_title")
-        ]

@@ -1,21 +1,20 @@
-# users/models.py
 from django.db import models
-from django.contrib.auth.models import User  # default auth user
+from django.contrib.auth.models import User
 
 class Student(models.Model):
     student_id = models.AutoField(primary_key=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="student_profile")
-    student_number = models.CharField(max_length=20, unique=True)
+    student_number = models.CharField(max_length=20, unique=True, db_index=True)
     program = models.CharField(max_length=100, blank=True)
 
     def __str__(self):
-        return f"{self.user.username} ({self.student_number})"
+        return f"{self.user.get_full_name() or self.user.username} ({self.student_number})"
 
 class Lecturer(models.Model):
     lecturer_id = models.AutoField(primary_key=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="lecturer_profile")
-    employee_number = models.CharField(max_length=20, unique=True)
+    employee_number = models.CharField(max_length=20, unique=True, db_index=True)
     department = models.CharField(max_length=100, blank=True)
 
     def __str__(self):
-        return f"{self.user.username} ({self.employee_number})"
+        return f"{self.user.get_full_name() or self.user.username} ({self.employee_number})"
