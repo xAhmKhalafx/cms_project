@@ -22,6 +22,9 @@ def user_logout(request):
     logout(request)
     return redirect("login")
 
+def help_docs(request):
+    return render(request, "users/help.html")
+
 
 @login_required
 def dashboard(request):

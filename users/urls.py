@@ -1,11 +1,12 @@
 from django.urls import path
-from .views import dashboard, user_login, user_logout, console_home
+from .views import dashboard, user_login, user_logout, console_home, help_docs
 from . import console_views
 
 urlpatterns = [
     path('', dashboard, name='dashboard'),
     path('login/', user_login, name='login'),
     path('logout/', user_logout, name='logout'),
+    path('help/', help_docs, name='help-docs'),
 
     path('console/', console_home, name='console-home'),
     path('accounts/login/', user_login, name='accounts-login'),
